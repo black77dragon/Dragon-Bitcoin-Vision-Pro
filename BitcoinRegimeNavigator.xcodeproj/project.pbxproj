@@ -1,0 +1,365 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		871CEA73649C4E626E0F152C /* BitcoinRegimeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */; };
+		905665A26178ABE998F54862 /* BitcoinRegimeDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */; };
+		FD76341C8981E125E839C2F2 /* BitcoinRegimeNavigatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0B24E4A86D38FB1DF2885163 /* visionos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = visionos; path = apps/visionos; sourceTree = SOURCE_ROOT; };
+		C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRegimeNavigatorApp.swift; sourceTree = "<group>"; };
+		D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BitcoinRegimeNavigatorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		20C78C0D3A63A25D813B8247 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				905665A26178ABE998F54862 /* BitcoinRegimeDomain in Frameworks */,
+				871CEA73649C4E626E0F152C /* BitcoinRegimeUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A1399A1F9BFEF7830CF9101 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				0B24E4A86D38FB1DF2885163 /* visionos */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		47668AFE37F89B5DB107DBF1 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		48769667BFBDF1CBBF47E59E = {
+			isa = PBXGroup;
+			children = (
+				FADED2E260CFFBBE447AAE8E /* apps */,
+				0A1399A1F9BFEF7830CF9101 /* Packages */,
+				A9796F38A4FF89753A0B6140 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		86A59B760A218A8B17AAAE49 /* visionos-app */ = {
+			isa = PBXGroup;
+			children = (
+				47668AFE37F89B5DB107DBF1 /* Sources */,
+			);
+			path = "visionos-app";
+			sourceTree = "<group>";
+		};
+		A9796F38A4FF89753A0B6140 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FADED2E260CFFBBE447AAE8E /* apps */ = {
+			isa = PBXGroup;
+			children = (
+				86A59B760A218A8B17AAAE49 /* visionos-app */,
+			);
+			path = apps;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B488E38F3AF3B047ABBDD556 /* BitcoinRegimeNavigatorApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F204C810EEB3BF3258B0DBCF /* Build configuration list for PBXNativeTarget "BitcoinRegimeNavigatorApp" */;
+			buildPhases = (
+				5D02DF9DFD8490F2D7A91DBD /* Sources */,
+				20C78C0D3A63A25D813B8247 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BitcoinRegimeNavigatorApp;
+			packageProductDependencies = (
+				6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */,
+				8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */,
+			);
+			productName = BitcoinRegimeNavigatorApp;
+			productReference = D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9235F3C0755E56C3105A13C3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					B488E38F3AF3B047ABBDD556 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CB4CA29E879ED3060934C184 /* Build configuration list for PBXProject "BitcoinRegimeNavigator" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 48769667BFBDF1CBBF47E59E;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C371B7F0B36208FFC2FE794A /* XCLocalSwiftPackageReference "apps/visionos" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A9796F38A4FF89753A0B6140 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B488E38F3AF3B047ABBDD556 /* BitcoinRegimeNavigatorApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5D02DF9DFD8490F2D7A91DBD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD76341C8981E125E839C2F2 /* BitcoinRegimeNavigatorApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		034384F3F47821FEF8736D93 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
+		0E1F686FE42D4D2C45E83EB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bitcoin Regime Navigator";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.black77dragon.BitcoinRegimeNavigator;
+				PRODUCT_NAME = "Bitcoin Regime Navigator";
+				SDKROOT = xros;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Release;
+		};
+		3569DD509B49022E778E6FE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		998519B1DE0BD8FC2600F65C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bitcoin Regime Navigator";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.black77dragon.BitcoinRegimeNavigator;
+				PRODUCT_NAME = "Bitcoin Regime Navigator";
+				SDKROOT = xros;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CB4CA29E879ED3060934C184 /* Build configuration list for PBXProject "BitcoinRegimeNavigator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3569DD509B49022E778E6FE1 /* Debug */,
+				034384F3F47821FEF8736D93 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F204C810EEB3BF3258B0DBCF /* Build configuration list for PBXNativeTarget "BitcoinRegimeNavigatorApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				998519B1DE0BD8FC2600F65C /* Debug */,
+				0E1F686FE42D4D2C45E83EB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		C371B7F0B36208FFC2FE794A /* XCLocalSwiftPackageReference "apps/visionos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = apps/visionos;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BitcoinRegimeDomain;
+		};
+		8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BitcoinRegimeUI;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 9235F3C0755E56C3105A13C3 /* Project object */;
+}
