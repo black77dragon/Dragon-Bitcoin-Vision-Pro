@@ -1,0 +1,14 @@
+{
+  "name": "@dragon-bitcoin/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-transform-types --watch src/server.ts",
+    "start": "node --experimental-transform-types src/server.ts",
+    "test": "node --experimental-transform-types --test tests/*.test.ts"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

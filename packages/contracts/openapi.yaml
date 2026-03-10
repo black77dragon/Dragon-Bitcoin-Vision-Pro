@@ -1,0 +1,383 @@
+openapi: 3.1.0
+info:
+  title: Bitcoin Regime Navigator API
+  version: 0.1.0
+  description: MVP contract for the Vision Pro-first Bitcoin Regime Navigator prototype.
+servers:
+  - url: http://localhost:8787
+paths:
+  /healthz:
+    get:
+      summary: Liveness probe
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    const: ok
+  /v1/briefing/current:
+    get:
+      summary: Returns the current briefing snapshot
+      parameters:
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [auto, demo, live]
+            default: auto
+      responses:
+        "200":
+          description: Current regime snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegimeSnapshot"
+  /v1/mempool/replay:
+    get:
+      summary: Returns replay frames for the mempool arena
+      parameters:
+        - name: range
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [6h, 24h]
+        - name: bucket
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [1m, 5m]
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [auto, demo, live]
+            default: auto
+      responses:
+        "200":
+          description: Replay data for the mempool arena
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReplayTimeline"
+  /v1/methodology:
+    get:
+      summary: Returns score methodology, sources, and limitations
+      responses:
+        "200":
+          description: Methodology payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MethodologyResponse"
+components:
+  schemas:
+    SourceStamp:
+      type: object
+      required:
+        - id
+        - name
+        - licenseClass
+        - cadence
+        - status
+        - fetchedAt
+        - freshnessSeconds
+        - confidencePenalty
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        licenseClass:
+          type: string
+          enum: [A, B, C]
+        cadence:
+          type: string
+        status:
+          type: string
+          enum: [live, delayed, demo, stale]
+        fetchedAt:
+          type: string
+          format: date-time
+        publishedAt:
+          type: string
+          format: date-time
+        freshnessSeconds:
+          type: integer
+        confidencePenalty:
+          type: number
+        note:
+          type: string
+    ScoreCard:
+      type: object
+      required:
+        - key
+        - label
+        - value
+        - direction
+        - summary
+        - contributionWeight
+        - sourceIds
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        value:
+          type: number
+        direction:
+          type: string
+          enum: [supportive, neutral, restrictive, elevated]
+        summary:
+          type: string
+        contributionWeight:
+          type: number
+        sourceIds:
+          type: array
+          items:
+            type: string
+    EvidenceCard:
+      type: object
+      required:
+        - id
+        - title
+        - valueLabel
+        - interpretation
+        - direction
+        - weight
+        - freshnessLabel
+        - sourceIds
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        valueLabel:
+          type: string
+        interpretation:
+          type: string
+        direction:
+          type: string
+          enum: [supportive, neutral, restrictive, elevated]
+        weight:
+          type: number
+        freshnessLabel:
+          type: string
+        sourceIds:
+          type: array
+          items:
+            type: string
+    ConfidenceBreakdown:
+      type: object
+      required:
+        - overall
+        - timeliness
+        - coverage
+        - agreement
+        - notes
+      properties:
+        overall:
+          type: number
+        timeliness:
+          type: number
+        coverage:
+          type: number
+        agreement:
+          type: number
+        notes:
+          type: array
+          items:
+            type: string
+    RegimeState:
+      type: object
+      required:
+        - key
+        - label
+        - summary
+        - alertLevel
+      properties:
+        key:
+          type: string
+          enum:
+            - calmAccumulation
+            - elevatedNetworkStress
+            - speculativeSpike
+            - distributionRisk
+            - structurallyCongested
+            - mixedEvidence
+        label:
+          type: string
+        summary:
+          type: string
+        alertLevel:
+          type: string
+          enum: [normal, watch, elevated]
+    ActionLink:
+      type: object
+      required:
+        - id
+        - label
+        - destination
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        destination:
+          type: string
+    RegimeSnapshot:
+      type: object
+      required:
+        - generatedAt
+        - regime
+        - confidence
+        - scores
+        - evidence
+        - narrative
+        - actions
+        - sources
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        regime:
+          $ref: "#/components/schemas/RegimeState"
+        confidence:
+          $ref: "#/components/schemas/ConfidenceBreakdown"
+        scores:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScoreCard"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceCard"
+        narrative:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActionLink"
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceStamp"
+    FeeBand:
+      type: object
+      required:
+        - label
+        - minFee
+        - maxFee
+        - queuedVBytes
+        - estimatedBlocksToClear
+      properties:
+        label:
+          type: string
+        minFee:
+          type: number
+        maxFee:
+          type: number
+        queuedVBytes:
+          type: integer
+        estimatedBlocksToClear:
+          type: number
+    BlockClearance:
+      type: object
+      required:
+        - blockHeight
+        - clearedVBytes
+        - feeFloorAfter
+      properties:
+        blockHeight:
+          type: integer
+        clearedVBytes:
+          type: integer
+        feeFloorAfter:
+          type: number
+    ReplayFrame:
+      type: object
+      required:
+        - timestamp
+        - stateLabel
+        - mempoolStressScore
+        - queuedVBytes
+        - estimatedBlocksToClear
+        - feeBands
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        stateLabel:
+          type: string
+        mempoolStressScore:
+          type: number
+        queuedVBytes:
+          type: integer
+        estimatedBlocksToClear:
+          type: number
+        feeBands:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeeBand"
+        blockClearance:
+          $ref: "#/components/schemas/BlockClearance"
+    ReplayTimeline:
+      type: object
+      required:
+        - generatedAt
+        - range
+        - bucket
+        - frames
+        - source
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        range:
+          type: string
+        bucket:
+          type: string
+        frames:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReplayFrame"
+        source:
+          $ref: "#/components/schemas/SourceStamp"
+    MethodologyResponse:
+      type: object
+      required:
+        - updatedAt
+        - scoreWeights
+        - sourceCatalog
+        - freshnessRules
+        - limitations
+      properties:
+        updatedAt:
+          type: string
+          format: date-time
+        scoreWeights:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+        sourceCatalog:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        freshnessRules:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string

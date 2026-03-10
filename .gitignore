@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.swiftpm/
+.vscode/
+DerivedData/
+node_modules/
+coverage/
+dist/
+*.log
+.env
+.env.local
