@@ -73,6 +73,9 @@ public struct DailyBriefingView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
+                    Text("Daily Briefing")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
                     Text(snapshot.regime.label)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                     Text(snapshot.regime.summary)
@@ -118,14 +121,19 @@ public struct DemoShellView: View {
                     .frame(maxWidth: 520)
                 }
                 .padding(20)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
             } else if viewModel.isLoading {
                 ProgressView("Loading briefing…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else if let errorMessage = viewModel.errorMessage {
                 ContentUnavailableView("Unable to load briefing", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             } else {
                 ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
         .task {
             await viewModel.load()
         }
