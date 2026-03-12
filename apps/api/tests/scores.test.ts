@@ -4,6 +4,7 @@ import { buildDemoFlowSignal, buildDemoMacroSignal, buildDemoMempoolSignal } fro
 import {
   buildConfidence,
   buildFlowScore,
+  buildMarketWeatherDetail,
   buildMacroScore,
   buildMempoolScore,
   buildRegimeState
@@ -25,6 +26,17 @@ test("macro score stays supportive when demo inputs ease", () => {
   assert.equal(score.key, "macroLiquidity");
   assert.ok(score.value >= 50);
   assert.equal(score.direction, "supportive");
+});
+
+test("market weather detail exposes four weighted ingredients", () => {
+  const signal = buildDemoMacroSignal();
+  const score = buildMacroScore(signal);
+  const detail = buildMarketWeatherDetail(signal, score);
+
+  assert.equal(detail.outlook, "Mostly Sunny");
+  assert.equal(detail.components.length, 4);
+  assert.equal(detail.components[0]?.title, "Dollar Strength");
+  assert.equal(detail.components.reduce((sum, component) => sum + component.weight, 0), 1);
 });
 
 test("composite regime reaches structural congestion on aligned demand", () => {
@@ -56,5 +68,5 @@ test("confidence degrades when sources are demo-backed", () => {
   );
 
   assert.ok(confidence.overall < 0.85);
-  assert.ok(confidence.notes.some((note) => note.includes("demo")));
+  assert.ok(confidence.notes.some((note) => /delayed|simulated|partial|older/i.test(note)));
 });

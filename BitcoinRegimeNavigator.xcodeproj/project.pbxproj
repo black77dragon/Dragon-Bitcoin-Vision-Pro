@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A2B3C4D5E6F708192A3B4C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */; };
 		871CEA73649C4E626E0F152C /* BitcoinRegimeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */; };
 		905665A26178ABE998F54862 /* BitcoinRegimeDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */; };
 		FD76341C8981E125E839C2F2 /* BitcoinRegimeNavigatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */; };
@@ -14,8 +15,9 @@
 
 /* Begin PBXFileReference section */
 		0B24E4A86D38FB1DF2885163 /* visionos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = visionos; path = apps/visionos; sourceTree = SOURCE_ROOT; };
+		2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRegimeNavigatorApp.swift; sourceTree = "<group>"; };
-		D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BitcoinRegimeNavigatorApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D40A449532483F26318BF04F /* Bitcoin Regime Navigator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bitcoin Regime Navigator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +49,14 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		59FAE0D1C2B3A49788776655 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		48769667BFBDF1CBBF47E59E = {
 			isa = PBXGroup;
 			children = (
@@ -60,6 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				47668AFE37F89B5DB107DBF1 /* Sources */,
+				59FAE0D1C2B3A49788776655 /* Resources */,
 			);
 			path = "visionos-app";
 			sourceTree = "<group>";
@@ -67,7 +78,7 @@
 		A9796F38A4FF89753A0B6140 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */,
+				D40A449532483F26318BF04F /* Bitcoin Regime Navigator.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -89,6 +100,7 @@
 			buildPhases = (
 				5D02DF9DFD8490F2D7A91DBD /* Sources */,
 				20C78C0D3A63A25D813B8247 /* Frameworks */,
+				3C4D5E6F708192A3B4C5D6E7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -100,7 +112,7 @@
 				8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */,
 			);
 			productName = BitcoinRegimeNavigatorApp;
-			productReference = D40A449532483F26318BF04F /* BitcoinRegimeNavigatorApp.app */;
+			productReference = D40A449532483F26318BF04F /* Bitcoin Regime Navigator.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -138,6 +150,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3C4D5E6F708192A3B4C5D6E7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A2B3C4D5E6F708192A3B4C5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D02DF9DFD8490F2D7A91DBD /* Sources */ = {
@@ -214,7 +237,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K64443ANHS;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_AppReleaseDate = "2026-03-10";
 				INFOPLIST_KEY_CFBundleDisplayName = "Bitcoin Regime Navigator";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -302,7 +327,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K64443ANHS;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_AppReleaseDate = "2026-03-10";
 				INFOPLIST_KEY_CFBundleDisplayName = "Bitcoin Regime Navigator";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

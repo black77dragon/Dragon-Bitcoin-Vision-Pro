@@ -24,7 +24,10 @@ let package = Package(
         ),
         .target(
             name: "BitcoinRegimeUI",
-            dependencies: ["BitcoinRegimeDomain"]
+            dependencies: ["BitcoinRegimeDomain"],
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "BitcoinRegimeDomainTests",

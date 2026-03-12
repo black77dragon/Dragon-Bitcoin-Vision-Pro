@@ -59,6 +59,13 @@
             ReferencedContainer = "container:BitcoinRegimeNavigator.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "BITCOIN_REGIME_API_BASE_URL"
+            value = "http://127.0.0.1:8787"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

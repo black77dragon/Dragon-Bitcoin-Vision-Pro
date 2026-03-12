@@ -2,7 +2,7 @@ import type { AppConfig } from "./config.ts";
 import type { DataMode, RegimeSnapshot } from "./contracts.ts";
 import { buildDemoReplayFrames } from "./fixtures.ts";
 import { buildMethodologyResponse } from "./methodology.ts";
-import { loadFlowSignal, loadMacroSignal, loadMempoolSignal } from "./providers.ts";
+import { loadBitcoinPriceSignal, loadFlowSignal, loadMacroSignal, loadMempoolSignal } from "./providers.ts";
 import { buildRegimeState, buildScoreBundle } from "./scores.ts";
 
 type FetchFn = typeof fetch;
@@ -16,10 +16,11 @@ export async function buildCurrentBriefing(input: {
   const now = input.now ?? new Date();
   const fetchImpl = input.fetchImpl ?? fetch;
 
-  const [mempoolSignal, macroSignal, flowSignal] = await Promise.all([
+  const [mempoolSignal, macroSignal, flowSignal, bitcoinPriceSignal] = await Promise.all([
     loadMempoolSignal(input.mode, input.config, now, fetchImpl),
     loadMacroSignal(input.mode, input.config, now, fetchImpl),
-    loadFlowSignal(input.mode, input.config, now, fetchImpl)
+    loadFlowSignal(input.mode, input.config, now, fetchImpl),
+    loadBitcoinPriceSignal(input.mode, input.config, now, fetchImpl)
   ]);
 
   const scoreBundle = buildScoreBundle({
@@ -39,17 +40,25 @@ export async function buildCurrentBriefing(input: {
     confidence: scoreBundle.confidence,
     scores: [scoreBundle.mempool, scoreBundle.macro, scoreBundle.flows],
     evidence: scoreBundle.evidence,
+    marketWeather: scoreBundle.marketWeather,
+    btcPrice: {
+      priceUsd: bitcoinPriceSignal.priceUsd,
+      deltaUsd: bitcoinPriceSignal.deltaUsd,
+      live: bitcoinPriceSignal.live,
+      sourceIds: bitcoinPriceSignal.sources.map((source) => source.id)
+    },
     narrative: scoreBundle.narrative,
     actions: [
-      { id: "open-arena", label: "Open Mempool Arena", destination: "vision://arena" },
-      { id: "view-replay", label: "Replay 6H", destination: "/v1/mempool/replay?range=6h&bucket=1m" },
-      { id: "view-methodology", label: "View Methodology", destination: "/v1/methodology" },
-      { id: "save-snapshot", label: "Save Snapshot", destination: "vision://snapshot/save" }
+      { id: "open-arena", label: "Open Network Traffic View", destination: "vision://arena" },
+      { id: "view-replay", label: "Replay Last 6 Hours", destination: "/v1/mempool/replay?range=6h&bucket=1m" },
+      { id: "view-methodology", label: "How This Is Calculated", destination: "/v1/methodology" },
+      { id: "save-snapshot", label: "Save This Snapshot", destination: "vision://snapshot/save" }
     ],
     sources: dedupeSources([
       ...mempoolSignal.sources,
       ...macroSignal.sources,
-      ...flowSignal.sources
+      ...flowSignal.sources,
+      ...bitcoinPriceSignal.sources
     ])
   };
 }

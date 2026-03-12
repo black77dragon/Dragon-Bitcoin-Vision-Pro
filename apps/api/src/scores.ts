@@ -1,6 +1,8 @@
 import type {
   ConfidenceBreakdown,
   EvidenceCard,
+  MarketWeatherComponent,
+  MarketWeatherDetail,
   RegimeState,
   ScoreCard,
   ScoreDirection,
@@ -12,6 +14,7 @@ export interface ScoreBundle {
   mempool: ScoreCard;
   macro: ScoreCard;
   flows: ScoreCard;
+  marketWeather: MarketWeatherDetail;
   confidence: ConfidenceBreakdown;
   regime: RegimeState;
   evidence: EvidenceCard[];
@@ -26,6 +29,7 @@ export function buildScoreBundle(input: {
   const mempool = buildMempoolScore(input.mempoolSignal);
   const macro = buildMacroScore(input.macroSignal);
   const flows = buildFlowScore(input.flowSignal);
+  const marketWeather = buildMarketWeatherDetail(input.macroSignal, macro);
   const confidence = buildConfidence(
     [
       ...input.mempoolSignal.sources,
@@ -55,6 +59,7 @@ export function buildScoreBundle(input: {
     mempool,
     macro,
     flows,
+    marketWeather,
     confidence,
     regime,
     evidence,
@@ -76,28 +81,23 @@ export function buildMempoolScore(signal: MempoolSignal): ScoreCard {
 
   return {
     key: "mempoolStress",
-    label: "Mempool Stress",
+    label: "Network Traffic",
     value,
     direction: scoreDirection(value, { elevated: 68, restrictive: 52 }),
-    summary: `Fee floor ${signal.minFee} sat/vB with ${signal.estimatedBlocksToClear.toFixed(1)} blocks to clear.`,
+    summary:
+      value >= 68
+        ? `The Bitcoin network is crowded. Typical low-end fees are around ${signal.minFee} sat/vB, and the queue would take about ${signal.estimatedBlocksToClear.toFixed(1)} blocks to clear.`
+        : value >= 52
+          ? `Network traffic is building. Typical low-end fees are around ${signal.minFee} sat/vB, and the queue is about ${signal.estimatedBlocksToClear.toFixed(1)} blocks deep.`
+          : `Network traffic is fairly light. Typical low-end fees are around ${signal.minFee} sat/vB, and the queue is about ${signal.estimatedBlocksToClear.toFixed(1)} blocks deep.`,
     contributionWeight: 0.42,
     sourceIds: signal.sources.map((source) => source.id)
   };
 }
 
 export function buildMacroScore(signal: MacroSignal): ScoreCard {
-  const dollarComponent = clamp(55 - (signal.dollarIndex.latest - signal.dollarIndex.previous) * 12, 0, 100);
-  const realYieldComponent = clamp(72 - signal.realYield10y.latest * 18, 0, 100);
-  const liquidityComponent = clamp(
-    45 + ((signal.liquidityProxy.latest - signal.liquidityProxy.previous) / signal.liquidityProxy.previous) * 2_200,
-    0,
-    100
-  );
-  const riskComponent = clamp(
-    50 + ((signal.riskProxy.latest - signal.riskProxy.previous) / signal.riskProxy.previous) * 2_500,
-    0,
-    100
-  );
+  const { dollarComponent, realYieldComponent, liquidityComponent, riskComponent } =
+    buildMacroComponentValues(signal);
   const value = weighted([
     [dollarComponent, 0.3],
     [realYieldComponent, 0.3],
@@ -107,12 +107,37 @@ export function buildMacroScore(signal: MacroSignal): ScoreCard {
 
   return {
     key: "macroLiquidity",
-    label: "Macro Liquidity",
+    label: "Broader Market Weather",
     value,
     direction: value >= 58 ? "supportive" : value >= 42 ? "neutral" : "restrictive",
-    summary: `Dollar and real yields are ${value >= 58 ? "less restrictive" : value < 42 ? "restrictive" : "mixed"} for Bitcoin risk appetite.`,
+    summary:
+      value >= 58
+        ? "The wider market backdrop is helping more than hurting. Money conditions are not strongly pushing investors away from risk."
+        : value < 42
+          ? "The wider market backdrop is working against risk-taking. That usually makes it harder for Bitcoin to attract fresh demand."
+          : "The wider market backdrop is mixed. It is not giving Bitcoin a strong push in either direction.",
     contributionWeight: 0.28,
     sourceIds: signal.sources.map((source) => source.id)
+  };
+}
+
+export function buildMarketWeatherDetail(
+  signal: MacroSignal,
+  score: Pick<ScoreCard, "value" | "summary">
+): MarketWeatherDetail {
+  const { dollarComponent, realYieldComponent, liquidityComponent, riskComponent } =
+    buildMacroComponentValues(signal);
+
+  return {
+    score: round(score.value, 1),
+    outlook: marketWeatherOutlook(score.value),
+    summary: score.summary,
+    components: [
+      buildMarketWeatherComponent(signal.dollarIndex, dollarComponent, 0.3),
+      buildMarketWeatherComponent(signal.realYield10y, realYieldComponent, 0.3),
+      buildMarketWeatherComponent(signal.liquidityProxy, liquidityComponent, 0.2),
+      buildMarketWeatherComponent(signal.riskProxy, riskComponent, 0.2)
+    ]
   };
 }
 
@@ -132,10 +157,15 @@ export function buildFlowScore(signal: FlowSignal): ScoreCard {
 
   return {
     key: "knownFlowPressure",
-    label: "Known Flow Pressure",
+    label: "Big Buyer Activity",
     value,
     direction: value >= 58 ? "supportive" : value >= 42 ? "neutral" : "restrictive",
-    summary: `${formatUsd(signal.netEtfFlowUsd)} of observable ETF flow with ${(signal.coverage * 100).toFixed(0)}% coverage.`,
+    summary:
+      value >= 58
+        ? `Tracked large buyers, including visible ETF flows, added about ${formatUsd(signal.netEtfFlowUsd)}. We can currently see ${(signal.coverage * 100).toFixed(0)}% of the picture.`
+        : value < 42
+          ? `Tracked large buyers are not adding enough support right now. Visible flow is about ${formatUsd(signal.netEtfFlowUsd)} with ${(signal.coverage * 100).toFixed(0)}% coverage.`
+          : `Tracked large-buyer flow is roughly balanced. Visible flow is about ${formatUsd(signal.netEtfFlowUsd)} with ${(signal.coverage * 100).toFixed(0)}% coverage.`,
     contributionWeight: 0.3,
     sourceIds: signal.sources.map((source) => source.id)
   };
@@ -183,8 +213,8 @@ export function buildRegimeState(input: {
   if (mempoolScore < 45 && macroScore >= 55 && flowScore >= 52) {
     return {
       key: "calmAccumulation",
-      label: "Calm Accumulation",
-      summary: "Blockspace is clearing and macro conditions are not actively restrictive.",
+      label: "Quiet, Healthy Demand",
+      summary: "The network is clearing smoothly and the broader backdrop is not getting in Bitcoin's way.",
       alertLevel: "normal"
     };
   }
@@ -192,8 +222,8 @@ export function buildRegimeState(input: {
   if (macroScore < 38 && flowScore < 45) {
     return {
       key: "distributionRisk",
-      label: "Distribution Risk",
-      summary: "Macro liquidity and observable flow context are leaning against sustained demand.",
+      label: "Demand Losing Strength",
+      summary: "The market backdrop and visible large-buyer flows both suggest demand is fading rather than strengthening.",
       alertLevel: "elevated"
     };
   }
@@ -201,8 +231,8 @@ export function buildRegimeState(input: {
   if (mempoolScore >= 80 && persistenceRatio < 0.58) {
     return {
       key: "speculativeSpike",
-      label: "Speculative Spike",
-      summary: "Stress is high, but refill behavior suggests a less durable burst.",
+      label: "Short-Lived Rush",
+      summary: "Activity is hot right now, but it still looks more like a burst of excitement than a lasting wave of demand.",
       alertLevel: "watch"
     };
   }
@@ -210,8 +240,8 @@ export function buildRegimeState(input: {
   if (mempoolScore >= 78 && persistenceRatio >= 0.58 && flowScore >= 52) {
     return {
       key: "structurallyCongested",
-      label: "Structurally Congested",
-      summary: "Elevated fee floors are persisting after block clearances, which implies durable demand.",
+      label: "Strong Demand, Crowded Network",
+      summary: "The network stays busy even after blocks clear, which usually points to demand that keeps coming back.",
       alertLevel: "elevated"
     };
   }
@@ -219,16 +249,16 @@ export function buildRegimeState(input: {
   if (mempoolScore >= 62) {
     return {
       key: "elevatedNetworkStress",
-      label: "Elevated Network Stress",
-      summary: "Bitcoin blockspace is crowded and worth deeper inspection in the arena.",
+      label: "Busy Network, Worth Watching",
+      summary: "Bitcoin traffic is elevated enough that sending coins is harder and the queue deserves a closer look.",
       alertLevel: "watch"
     };
   }
 
   return {
     key: "mixedEvidence",
-    label: "Mixed Evidence",
-    summary: "Inputs do not align into a single clean regime yet.",
+    label: "Mixed Signals",
+    summary: "The inputs do not yet tell one clean story, so this read should be treated as tentative.",
     alertLevel: "watch"
   };
 }
@@ -241,15 +271,22 @@ function buildEvidenceCards(input: {
   macroScore: ScoreCard;
   flowScore: ScoreCard;
 }): EvidenceCard[] {
+  const macroInterpretation =
+    input.macroScore.direction === "supportive"
+      ? "Outside conditions are reasonably friendly for risk-taking, so macro is not putting heavy pressure on Bitcoin."
+      : input.macroScore.direction === "restrictive"
+        ? "Higher cash yields and a firmer dollar are making investors more cautious, which can weigh on Bitcoin demand."
+        : "The outside backdrop is mixed, so it should be treated as context rather than a decisive signal.";
+
   return [
     {
       id: "mempool-floor",
-      title: "Fee floor persistence",
+      title: "Base transaction cost",
       valueLabel: `${input.mempoolSignal.minFee} sat/vB floor`,
       interpretation:
         input.mempoolSignal.persistenceRatio >= 0.58
-          ? "Elevated fees are sticking after block clearances."
-          : "Recent stress still looks event-driven rather than durable.",
+          ? "Even after new blocks are mined, the cheapest workable fee stays high. That is a sign the queue is refilling quickly."
+          : "Fees spiked, but they are not staying high for long. That points to a temporary surge rather than steady pressure.",
       direction: input.mempoolScore.direction,
       weight: 0.42,
       freshnessLabel: freshnessLabel(input.mempoolSignal.sources),
@@ -257,14 +294,9 @@ function buildEvidenceCards(input: {
     },
     {
       id: "macro-backdrop",
-      title: "Macro backdrop",
+      title: "Broader market backdrop",
       valueLabel: `${input.macroScore.value.toFixed(0)}/100`,
-      interpretation:
-        input.macroScore.direction === "supportive"
-          ? "Macro conditions are not strongly fighting Bitcoin demand."
-          : input.macroScore.direction === "restrictive"
-            ? "Dollar and real-yield pressure are reducing risk support."
-            : "Macro inputs are mixed and should remain supporting context only.",
+      interpretation: [macroInterpretation, input.macroSignal.headlineSummary].filter(Boolean).join(" "),
       direction: input.macroScore.direction,
       weight: 0.28,
       freshnessLabel: freshnessLabel(input.macroSignal.sources),
@@ -272,20 +304,62 @@ function buildEvidenceCards(input: {
     },
     {
       id: "flow-context",
-      title: "Known flow context",
+      title: "Large tracked buying",
       valueLabel: formatUsd(input.flowSignal.netEtfFlowUsd),
       interpretation:
         input.flowScore.direction === "supportive"
-          ? "Observable ETF demand is supportive, though coverage is partial."
+          ? "Visible large buyers are adding support. This mainly reflects public ETF data, and it is still only part of the full market."
           : input.flowScore.direction === "restrictive"
-            ? "Observable flows are not offsetting current market pressure."
-            : "Known flows are broadly neutral or incomplete.",
+            ? "Visible large buyers are not strong enough to counter the current pressure in the market."
+            : "Tracked buying is either balanced or incomplete, so it is not a strong signal on its own.",
       direction: input.flowScore.direction,
       weight: 0.3,
       freshnessLabel: freshnessLabel(input.flowSignal.sources),
       sourceIds: input.flowSignal.sources.map((source) => source.id)
     }
   ];
+}
+
+function buildMacroComponentValues(signal: MacroSignal) {
+  return {
+    dollarComponent: clamp(55 - (signal.dollarIndex.latest - signal.dollarIndex.previous) * 12, 0, 100),
+    realYieldComponent: clamp(72 - signal.realYield10y.latest * 18, 0, 100),
+    liquidityComponent: clamp(
+      45 + ((signal.liquidityProxy.latest - signal.liquidityProxy.previous) / signal.liquidityProxy.previous) * 2_200,
+      0,
+      100
+    ),
+    riskComponent: clamp(
+      50 + ((signal.riskProxy.latest - signal.riskProxy.previous) / signal.riskProxy.previous) * 2_500,
+      0,
+      100
+    )
+  };
+}
+
+function buildMarketWeatherComponent(
+  metric: MacroSignal["dollarIndex"],
+  score: number,
+  weight: number
+): MarketWeatherComponent {
+  const effect = directionalWeatherEffect(score);
+  const change = metric.latest - metric.previous;
+  const changePrefix = change > 0 ? "Up" : change < 0 ? "Down" : "Flat";
+
+  return {
+    id: metric.id,
+    title: metric.label,
+    score: round(score, 1),
+    valueLabel: formatMetricValue(metric.latest, metric.unit),
+    changeLabel:
+      change === 0
+        ? "Flat versus previous reading"
+        : `${changePrefix} ${formatMetricValue(Math.abs(change), metric.unit)} versus previous reading`,
+    effect,
+    weight,
+    summary: marketWeatherComponentSummary(metric.id, effect),
+    sourceIds: [metric.source.id]
+  };
 }
 
 function buildNarrative(
@@ -299,8 +373,10 @@ function buildNarrative(
     .slice(0, 2)
     .map((card) => card.title.toLowerCase())
     .join(" and ");
+  const confidenceTone =
+    confidence.overall >= 0.75 ? "fairly solid" : confidence.overall >= 0.6 ? "moderate" : "limited";
 
-  return `Regime: ${regime.label}. Evidence: ${strongest}. Confidence: ${confidence.overall.toFixed(2)}.`;
+  return `In plain English: ${regime.summary} The clearest signals right now are ${strongest}. Confidence is ${confidenceTone} (${confidence.overall.toFixed(2)}) because some of the inputs are still partial or less timely than we would like.`;
 }
 
 function scoreDirection(
@@ -316,6 +392,67 @@ function scoreDirection(
   return "supportive";
 }
 
+function directionalWeatherEffect(value: number): ScoreDirection {
+  if (value >= 58) {
+    return "supportive";
+  }
+  if (value >= 42) {
+    return "neutral";
+  }
+  return "restrictive";
+}
+
+function marketWeatherOutlook(score: number): string {
+  if (score >= 72) {
+    return "Sunny";
+  }
+  if (score >= 58) {
+    return "Mostly Sunny";
+  }
+  if (score >= 42) {
+    return "Cloudy";
+  }
+  if (score >= 28) {
+    return "Rainy";
+  }
+  return "Stormy";
+}
+
+function marketWeatherComponentSummary(metricId: string, effect: ScoreDirection): string {
+  switch (metricId) {
+    case "dollarIndex":
+    case "DTWEXBGS":
+      return effect === "supportive"
+        ? "A softer dollar is easing pressure on global risk assets."
+        : effect === "restrictive"
+          ? "A firmer dollar is acting like a headwind for risk appetite."
+          : "Dollar moves are mixed enough to be context rather than a decisive push.";
+    case "realYield10y":
+    case "DFII10":
+      return effect === "supportive"
+        ? "Lower real yields make non-yielding assets like Bitcoin easier to hold."
+        : effect === "restrictive"
+          ? "Higher real yields increase the appeal of cash and bonds over Bitcoin."
+          : "Real yields are not moving enough to dominate the current read.";
+    case "liquidityProxy":
+    case "WALCL":
+      return effect === "supportive"
+        ? "Liquidity conditions are improving, which usually helps speculative demand."
+        : effect === "restrictive"
+          ? "Liquidity is tightening, which can drain support from risk assets."
+          : "Liquidity is stable enough that it is neither helping nor hurting much.";
+    case "riskProxy":
+    case "SP500":
+      return effect === "supportive"
+        ? "Broader risk appetite is constructive and not pushing investors into defense."
+        : effect === "restrictive"
+          ? "Investors are leaning more defensive across broader markets."
+          : "Risk appetite is mixed, so this input should be treated as secondary context.";
+    default:
+      return "This metric is one of the ingredients behind the broader market weather score.";
+  }
+}
+
 function buildConfidenceNotes(input: {
   timeliness: number;
   coverage: number;
@@ -325,19 +462,19 @@ function buildConfidenceNotes(input: {
   const notes: string[] = [];
 
   if (input.timeliness < 0.7) {
-    notes.push("At least one supporting source is demo-backed, delayed, or stale.");
+    notes.push("Some of the supporting data is delayed, simulated, or older than ideal.");
   }
 
   if (input.coverage < 0.75) {
-    notes.push("Known flow and macro coverage remain partial in the MVP pipeline.");
+    notes.push("We can only see part of the large-buyer and macro picture in this MVP.");
   }
 
   if (input.agreement < 0.7) {
-    notes.push("Scores are diverging, so the headline state should be treated as provisional.");
+    notes.push("The signals disagree with each other, so this headline read should be treated cautiously.");
   }
 
   if (notes.length === 0) {
-    notes.push("Source freshness and score agreement are currently strong.");
+    notes.push("The main inputs are fresh and broadly telling the same story.");
   }
 
   return notes;
@@ -382,4 +519,21 @@ function formatUsd(value: number): string {
     notation: "compact",
     maximumFractionDigits: 1
   }).format(value);
+}
+
+function formatMetricValue(value: number, unit: string): string {
+  const formatted = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: unit === "%" ? 2 : Math.abs(value) >= 100 ? 1 : 2
+  }).format(value);
+
+  if (unit === "%") {
+    return `${formatted}%`;
+  }
+
+  if (unit === "bn") {
+    return `${formatted} bn`;
+  }
+
+  return formatted;
 }

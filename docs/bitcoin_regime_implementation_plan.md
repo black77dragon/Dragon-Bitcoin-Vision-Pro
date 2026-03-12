@@ -24,7 +24,9 @@ Deliver an internal Apple Vision Pro-first MVP that can answer two questions in 
 - Data sources:
   - live mempool data via `mempool.space`
   - optional FRED-backed macro data when `FRED_API_KEY` is present
-  - optional ETF flow proxy when `ETF_FLOW_PROXY_URL` is present
+  - Glassnode U.S. spot ETF flows as the primary large-buyer feed when `GLASSNODE_API_KEY` is present
+  - optional Farside daily cross-check note for ETF totals
+  - optional ETF flow proxy override when `ETF_FLOW_PROXY_URL` is present
   - deterministic demo fallback for offline development and investor demos
 
 ### Client foundation

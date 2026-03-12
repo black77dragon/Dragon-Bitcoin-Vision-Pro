@@ -26,6 +26,7 @@ targets:
         CURRENT_PROJECT_VERSION: 1
         MARKETING_VERSION: 0.1.0
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_AppReleaseDate: "2026-03-10"
         INFOPLIST_KEY_CFBundleDisplayName: Bitcoin Regime Navigator
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES

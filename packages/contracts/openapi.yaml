@@ -174,6 +174,23 @@ components:
           type: array
           items:
             type: string
+    BitcoinPriceTicker:
+      type: object
+      required:
+        - priceUsd
+        - live
+        - sourceIds
+      properties:
+        priceUsd:
+          type: number
+        deltaUsd:
+          type: number
+        live:
+          type: boolean
+        sourceIds:
+          type: array
+          items:
+            type: string
     ConfidenceBreakdown:
       type: object
       required:
@@ -259,6 +276,8 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/EvidenceCard"
+        btcPrice:
+          $ref: "#/components/schemas/BitcoinPriceTicker"
         narrative:
           type: string
         actions:
