@@ -11,9 +11,14 @@ public final class BriefingViewModel: ObservableObject {
     @Published public private(set) var errorMessage: String?
 
     private let service: any RegimeService
+    private let onSnapshotLoaded: (RegimeSnapshot) -> Void
 
-    public init(service: any RegimeService = DemoRegimeService()) {
+    public init(
+        service: any RegimeService = DemoRegimeService(),
+        onSnapshotLoaded: @escaping (RegimeSnapshot) -> Void = { _ in }
+    ) {
         self.service = service
+        self.onSnapshotLoaded = onSnapshotLoaded
     }
 
     public func load() async {
@@ -29,7 +34,9 @@ public final class BriefingViewModel: ObservableObject {
             async let replay = service.fetchReplay(range: .sixHours, bucket: .oneMinute)
             async let methodology = service.fetchMethodology()
 
-            self.snapshot = try await snapshot
+            let resolvedSnapshot = try await snapshot
+            self.snapshot = resolvedSnapshot
+            onSnapshotLoaded(resolvedSnapshot)
             self.replay = try await replay
             self.methodology = try await methodology
         } catch {

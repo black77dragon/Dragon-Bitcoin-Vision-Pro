@@ -33,6 +33,29 @@ import Testing
     #expect(saved.first?.snapshot.regime.label == snapshot.regime.label)
 }
 
+@Test func widgetSnapshotCacheRoundTripsLatestSnapshot() throws {
+    let tempDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).appending(path: UUID().uuidString, directoryHint: .isDirectory)
+    let fileManager = FileManager()
+    let cache = WidgetSnapshotCache(
+        fileManager: fileManager,
+        appGroupIdentifier: "group.test.bitcoin-regime",
+        containerURLResolver: { _, appGroupIdentifier in
+            appGroupIdentifier == "group.test.bitcoin-regime" ? tempDirectory : nil
+        }
+    )
+    let snapshot = BitcoinRegimeSampleData.snapshot()
+
+    defer {
+        try? fileManager.removeItem(at: tempDirectory)
+    }
+
+    let savedURL = try cache.save(snapshot: snapshot)
+    let savedSnapshot = try cache.loadLatest()
+
+    #expect(savedURL?.lastPathComponent == BitcoinRegimeSharedStorage.widgetSnapshotFileName)
+    #expect(savedSnapshot?.snapshot.regime.key == snapshot.regime.key)
+}
+
 @Test func fallbackServiceUsesDemoDataWhenPrimaryFails() async throws {
     let service = FallbackRegimeService(primary: ThrowingRegimeService())
 

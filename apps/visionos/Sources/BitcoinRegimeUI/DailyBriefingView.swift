@@ -181,13 +181,19 @@ public struct DemoShellView: View {
 
     public init(
         service: any RegimeService = DemoRegimeService(),
+        onSnapshotLoaded: @escaping (RegimeSnapshot) -> Void = { _ in },
         onAction: @escaping (ActionLink) -> Void = { _ in },
         onOpenTrafficView: @escaping () -> Void = {},
         onOpenMarketWeatherView: @escaping () -> Void = {},
         onToggleImmersiveTrafficView: @escaping () -> Void = {},
         isImmersiveTrafficActive: Bool = false
     ) {
-        _viewModel = StateObject(wrappedValue: BriefingViewModel(service: service))
+        _viewModel = StateObject(
+            wrappedValue: BriefingViewModel(
+                service: service,
+                onSnapshotLoaded: onSnapshotLoaded
+            )
+        )
         self.onAction = onAction
         self.onOpenTrafficView = onOpenTrafficView
         self.onOpenMarketWeatherView = onOpenMarketWeatherView

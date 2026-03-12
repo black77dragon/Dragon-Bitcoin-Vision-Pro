@@ -66,6 +66,7 @@ private struct RootShellView: View {
                     AppChromeBitcoinVolatilityTile()
                     DemoShellView(
                         service: service,
+                        onSnapshotLoaded: WidgetSnapshotWriter.save,
                         onAction: handleAction,
                         onOpenTrafficView: openTrafficView,
                         onOpenMarketWeatherView: openMarketWeatherView,
