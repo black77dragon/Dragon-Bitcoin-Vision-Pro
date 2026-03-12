@@ -7,17 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A2B3C4D5E6F708192A3B4C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */; };
+		1846D40F9E7166EF71B9F556 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4674030E878A45EE6AAD1C3D /* Assets.xcassets */; };
+		2039CF1E598AB368ED5E27CC /* BitcoinRegimeDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 186A26C8E144BA6AAED62311 /* BitcoinRegimeDomain */; };
+		21E393BF36980AA8D60D7ACA /* Bitcoin Regime Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 233153664B9441BDEE7C4B23 /* Bitcoin Regime Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		871CEA73649C4E626E0F152C /* BitcoinRegimeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8A9A11B67F1671308D05B2C9 /* BitcoinRegimeUI */; };
+		89846694524766D2D4602220 /* BitcoinRegimeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0DCBD7FA3AACC60743C101 /* BitcoinRegimeWidget.swift */; };
 		905665A26178ABE998F54862 /* BitcoinRegimeDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */; };
+		B5A15D7EDD35FC00D650E619 /* WidgetSnapshotWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC9F971E2827CE3746180F72 /* WidgetSnapshotWriter.swift */; };
 		FD76341C8981E125E839C2F2 /* BitcoinRegimeNavigatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		B5E2FCFFF0581D745DC3A29F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9235F3C0755E56C3105A13C3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5C8CEA1325ABFCF5CBC9C5C4;
+			remoteInfo = BitcoinRegimeWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		16959702A8712A56A1457CD5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				21E393BF36980AA8D60D7ACA /* Bitcoin Regime Widget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0B24E4A86D38FB1DF2885163 /* visionos */ = {isa = PBXFileReference; lastKnownFileType = folder; name = visionos; path = apps/visionos; sourceTree = SOURCE_ROOT; };
-		2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		233153664B9441BDEE7C4B23 /* Bitcoin Regime Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Bitcoin Regime Widget.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4674030E878A45EE6AAD1C3D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA0DCBD7FA3AACC60743C101 /* BitcoinRegimeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRegimeWidget.swift; sourceTree = "<group>"; };
 		C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinRegimeNavigatorApp.swift; sourceTree = "<group>"; };
 		D40A449532483F26318BF04F /* Bitcoin Regime Navigator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bitcoin Regime Navigator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC9F971E2827CE3746180F72 /* WidgetSnapshotWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotWriter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +58,14 @@
 			files = (
 				905665A26178ABE998F54862 /* BitcoinRegimeDomain in Frameworks */,
 				871CEA73649C4E626E0F152C /* BitcoinRegimeUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9314B0CD856C33E5B7A36D01 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2039CF1E598AB368ED5E27CC /* BitcoinRegimeDomain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,16 +84,9 @@
 			isa = PBXGroup;
 			children = (
 				C67D1ECD1630223212F1EA5A /* BitcoinRegimeNavigatorApp.swift */,
+				DC9F971E2827CE3746180F72 /* WidgetSnapshotWriter.swift */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		59FAE0D1C2B3A49788776655 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				2B3C4D5E6F708192A3B4C5D6 /* Assets.xcassets */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		48769667BFBDF1CBBF47E59E = {
@@ -66,27 +98,53 @@
 			);
 			sourceTree = "<group>";
 		};
+		50B16B69435C6682FDD1A78D /* visionos-widget */ = {
+			isa = PBXGroup;
+			children = (
+				897C82D8F50775319D0EAAE6 /* Sources */,
+			);
+			path = "visionos-widget";
+			sourceTree = "<group>";
+		};
 		86A59B760A218A8B17AAAE49 /* visionos-app */ = {
 			isa = PBXGroup;
 			children = (
+				D33FC0A90E430CADF898B8B7 /* Resources */,
 				47668AFE37F89B5DB107DBF1 /* Sources */,
-				59FAE0D1C2B3A49788776655 /* Resources */,
 			);
 			path = "visionos-app";
+			sourceTree = "<group>";
+		};
+		897C82D8F50775319D0EAAE6 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AA0DCBD7FA3AACC60743C101 /* BitcoinRegimeWidget.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		A9796F38A4FF89753A0B6140 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				D40A449532483F26318BF04F /* Bitcoin Regime Navigator.app */,
+				233153664B9441BDEE7C4B23 /* Bitcoin Regime Widget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D33FC0A90E430CADF898B8B7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4674030E878A45EE6AAD1C3D /* Assets.xcassets */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		FADED2E260CFFBBE447AAE8E /* apps */ = {
 			isa = PBXGroup;
 			children = (
 				86A59B760A218A8B17AAAE49 /* visionos-app */,
+				50B16B69435C6682FDD1A78D /* visionos-widget */,
 			);
 			path = apps;
 			sourceTree = "<group>";
@@ -94,17 +152,38 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5C8CEA1325ABFCF5CBC9C5C4 /* BitcoinRegimeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B0C165E71F55BB11A8B14489 /* Build configuration list for PBXNativeTarget "BitcoinRegimeWidgetExtension" */;
+			buildPhases = (
+				32D32CF02B4AA1CF7383E3C9 /* Sources */,
+				9314B0CD856C33E5B7A36D01 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BitcoinRegimeWidgetExtension;
+			packageProductDependencies = (
+				186A26C8E144BA6AAED62311 /* BitcoinRegimeDomain */,
+			);
+			productName = BitcoinRegimeWidgetExtension;
+			productReference = 233153664B9441BDEE7C4B23 /* Bitcoin Regime Widget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		B488E38F3AF3B047ABBDD556 /* BitcoinRegimeNavigatorApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F204C810EEB3BF3258B0DBCF /* Build configuration list for PBXNativeTarget "BitcoinRegimeNavigatorApp" */;
 			buildPhases = (
 				5D02DF9DFD8490F2D7A91DBD /* Sources */,
+				E4AD9137A540AD64D1C6BC66 /* Resources */,
 				20C78C0D3A63A25D813B8247 /* Frameworks */,
-				3C4D5E6F708192A3B4C5D6E7 /* Resources */,
+				16959702A8712A56A1457CD5 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				266E858BEC2E743E7C38A9AB /* PBXTargetDependency */,
 			);
 			name = BitcoinRegimeNavigatorApp;
 			packageProductDependencies = (
@@ -124,6 +203,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					5C8CEA1325ABFCF5CBC9C5C4 = {
+						ProvisioningStyle = Automatic;
+					};
 					B488E38F3AF3B047ABBDD556 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -147,31 +229,49 @@
 			projectRoot = "";
 			targets = (
 				B488E38F3AF3B047ABBDD556 /* BitcoinRegimeNavigatorApp */,
+				5C8CEA1325ABFCF5CBC9C5C4 /* BitcoinRegimeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3C4D5E6F708192A3B4C5D6E7 /* Resources */ = {
+		E4AD9137A540AD64D1C6BC66 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A2B3C4D5E6F708192A3B4C5 /* Assets.xcassets in Resources */,
+				1846D40F9E7166EF71B9F556 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		32D32CF02B4AA1CF7383E3C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				89846694524766D2D4602220 /* BitcoinRegimeWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5D02DF9DFD8490F2D7A91DBD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				FD76341C8981E125E839C2F2 /* BitcoinRegimeNavigatorApp.swift in Sources */,
+				B5A15D7EDD35FC00D650E619 /* WidgetSnapshotWriter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		266E858BEC2E743E7C38A9AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5C8CEA1325ABFCF5CBC9C5C4 /* BitcoinRegimeWidgetExtension */;
+			targetProxy = B5E2FCFFF0581D745DC3A29F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		034384F3F47821FEF8736D93 /* Release */ = {
@@ -320,6 +420,30 @@
 			};
 			name = Debug;
 		};
+		4A09EF120DFF6A4478395D3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K64443ANHS;
+				INFOPLIST_FILE = "apps/visionos-widget/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.black77dragon.BitcoinRegimeNavigator.WidgetExtension;
+				PRODUCT_NAME = "Bitcoin Regime Widget";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
 		998519B1DE0BD8FC2600F65C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -347,9 +471,42 @@
 			};
 			name = Debug;
 		};
+		D307E21EDEF468E977E7E412 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K64443ANHS;
+				INFOPLIST_FILE = "apps/visionos-widget/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.black77dragon.BitcoinRegimeNavigator.WidgetExtension;
+				PRODUCT_NAME = "Bitcoin Regime Widget";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B0C165E71F55BB11A8B14489 /* Build configuration list for PBXNativeTarget "BitcoinRegimeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D307E21EDEF468E977E7E412 /* Debug */,
+				4A09EF120DFF6A4478395D3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		CB4CA29E879ED3060934C184 /* Build configuration list for PBXProject "BitcoinRegimeNavigator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -378,6 +535,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		186A26C8E144BA6AAED62311 /* BitcoinRegimeDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BitcoinRegimeDomain;
+		};
 		6AE07891A98CA9D79A390E52 /* BitcoinRegimeDomain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BitcoinRegimeDomain;

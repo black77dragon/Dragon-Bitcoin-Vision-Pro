@@ -36,6 +36,38 @@ public struct MempoolArenaView: View {
                     .foregroundStyle(.secondary)
             }
 
+            GeometryReader { geometry in
+                HStack(alignment: .bottom, spacing: 8) {
+                    ForEach(activeFrame.feeBands.indices, id: \.self) { index in
+                        let band = activeFrame.feeBands[index]
+                        VStack(spacing: 8) {
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(bandColor(index).gradient)
+                                .frame(
+                                    width: max(geometry.size.width / CGFloat(activeFrame.feeBands.count) - 12, 28),
+                                    height: max(CGFloat(band.queuedVBytes) / 35_000, 32)
+                                )
+                                .overlay(alignment: .top) {
+                                    Text("\(Int(band.maxFee))")
+                                        .font(.caption2.weight(.semibold))
+                                        .padding(.top, 8)
+                                }
+
+                            Text(band.label)
+                                .font(.caption)
+                                .multilineTextAlignment(.center)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            }
+            .frame(height: 260)
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color.black.opacity(0.08))
+            )
+
             VStack(alignment: .leading, spacing: 12) {
                 ReplayTransportBar(
                     isPlaying: isPlaying,
@@ -83,38 +115,6 @@ public struct MempoolArenaView: View {
             .background(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(Color.black.opacity(0.10))
-            )
-
-            GeometryReader { geometry in
-                HStack(alignment: .bottom, spacing: 8) {
-                    ForEach(activeFrame.feeBands.indices, id: \.self) { index in
-                        let band = activeFrame.feeBands[index]
-                        VStack(spacing: 8) {
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(bandColor(index).gradient)
-                                .frame(
-                                    width: max(geometry.size.width / CGFloat(activeFrame.feeBands.count) - 12, 28),
-                                    height: max(CGFloat(band.queuedVBytes) / 35_000, 32)
-                                )
-                                .overlay(alignment: .top) {
-                                    Text("\(Int(band.maxFee))")
-                                        .font(.caption2.weight(.semibold))
-                                        .padding(.top, 8)
-                                }
-
-                            Text(band.label)
-                                .font(.caption)
-                                .multilineTextAlignment(.center)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-            }
-            .frame(height: 260)
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color.black.opacity(0.08))
             )
 
             VStack(alignment: .leading, spacing: 12) {
@@ -263,6 +263,8 @@ private struct LaunchActionButton: View {
     }
 
     var body: some View {
+        let buttonShape = RoundedRectangle(cornerRadius: 22, style: .continuous)
+
         Button(action: action) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .center, spacing: 10) {
@@ -302,6 +304,9 @@ private struct LaunchActionButton: View {
             .background(buttonBackground)
         }
         .buttonStyle(.plain)
+        .clipShape(buttonShape)
+        .contentShape(buttonShape)
+        .hoverEffect(.highlight)
     }
 
     @ViewBuilder
