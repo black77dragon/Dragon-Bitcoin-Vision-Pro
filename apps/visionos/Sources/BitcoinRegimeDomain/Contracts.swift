@@ -141,6 +141,78 @@ public struct EvidenceCard: Codable, Hashable, Sendable {
     }
 }
 
+public struct MarketWeatherComponent: Codable, Hashable, Sendable {
+    public let id: String
+    public let title: String
+    public let score: Double
+    public let valueLabel: String
+    public let changeLabel: String
+    public let effect: ScoreDirection
+    public let weight: Double
+    public let summary: String
+    public let sourceIds: [String]
+
+    public init(
+        id: String,
+        title: String,
+        score: Double,
+        valueLabel: String,
+        changeLabel: String,
+        effect: ScoreDirection,
+        weight: Double,
+        summary: String,
+        sourceIds: [String]
+    ) {
+        self.id = id
+        self.title = title
+        self.score = score
+        self.valueLabel = valueLabel
+        self.changeLabel = changeLabel
+        self.effect = effect
+        self.weight = weight
+        self.summary = summary
+        self.sourceIds = sourceIds
+    }
+}
+
+public struct MarketWeatherDetail: Codable, Hashable, Sendable {
+    public let score: Double
+    public let outlook: String
+    public let summary: String
+    public let components: [MarketWeatherComponent]
+
+    public init(
+        score: Double,
+        outlook: String,
+        summary: String,
+        components: [MarketWeatherComponent]
+    ) {
+        self.score = score
+        self.outlook = outlook
+        self.summary = summary
+        self.components = components
+    }
+}
+
+public struct BitcoinPriceTicker: Codable, Hashable, Sendable {
+    public let priceUsd: Double
+    public let deltaUsd: Double?
+    public let live: Bool
+    public let sourceIds: [String]
+
+    public init(
+        priceUsd: Double,
+        deltaUsd: Double? = nil,
+        live: Bool,
+        sourceIds: [String]
+    ) {
+        self.priceUsd = priceUsd
+        self.deltaUsd = deltaUsd
+        self.live = live
+        self.sourceIds = sourceIds
+    }
+}
+
 public struct ConfidenceBreakdown: Codable, Hashable, Sendable {
     public let overall: Double
     public let timeliness: Double
@@ -195,6 +267,8 @@ public struct RegimeSnapshot: Codable, Hashable, Sendable {
     public let confidence: ConfidenceBreakdown
     public let scores: [ScoreCard]
     public let evidence: [EvidenceCard]
+    public let marketWeather: MarketWeatherDetail?
+    public let btcPrice: BitcoinPriceTicker?
     public let narrative: String
     public let actions: [ActionLink]
     public let sources: [SourceStamp]
@@ -205,6 +279,8 @@ public struct RegimeSnapshot: Codable, Hashable, Sendable {
         confidence: ConfidenceBreakdown,
         scores: [ScoreCard],
         evidence: [EvidenceCard],
+        marketWeather: MarketWeatherDetail? = nil,
+        btcPrice: BitcoinPriceTicker? = nil,
         narrative: String,
         actions: [ActionLink],
         sources: [SourceStamp]
@@ -214,6 +290,8 @@ public struct RegimeSnapshot: Codable, Hashable, Sendable {
         self.confidence = confidence
         self.scores = scores
         self.evidence = evidence
+        self.marketWeather = marketWeather
+        self.btcPrice = btcPrice
         self.narrative = narrative
         self.actions = actions
         self.sources = sources

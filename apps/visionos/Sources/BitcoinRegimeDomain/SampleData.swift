@@ -14,8 +14,38 @@ public enum BitcoinRegimeSampleData {
                 confidencePenalty: 0
             ),
             SourceStamp(
-                id: "fred-macro-demo",
-                name: "FRED Macro Demo",
+                id: "fred-dxy-demo",
+                name: "FRED Broad Dollar Demo",
+                licenseClass: .b,
+                cadence: "daily",
+                status: .demo,
+                fetchedAt: now,
+                freshnessSeconds: 0,
+                confidencePenalty: 0.12
+            ),
+            SourceStamp(
+                id: "fred-real-yield-demo",
+                name: "FRED Real Yield Demo",
+                licenseClass: .b,
+                cadence: "daily",
+                status: .demo,
+                fetchedAt: now,
+                freshnessSeconds: 0,
+                confidencePenalty: 0.12
+            ),
+            SourceStamp(
+                id: "fred-liquidity-demo",
+                name: "FRED Liquidity Demo",
+                licenseClass: .b,
+                cadence: "weekly",
+                status: .demo,
+                fetchedAt: now,
+                freshnessSeconds: 0,
+                confidencePenalty: 0.16
+            ),
+            SourceStamp(
+                id: "fred-risk-demo",
+                name: "FRED Risk Proxy Demo",
                 licenseClass: .b,
                 cadence: "daily",
                 status: .demo,
@@ -33,15 +63,29 @@ public enum BitcoinRegimeSampleData {
                 freshnessSeconds: 0,
                 confidencePenalty: 0.18,
                 note: "Partial coverage in MVP mode."
+            ),
+            SourceStamp(
+                id: "mempool-price",
+                name: "mempool.space BTC/USD",
+                licenseClass: .a,
+                cadence: "near-real-time",
+                status: .live,
+                fetchedAt: now,
+                freshnessSeconds: 0,
+                confidencePenalty: 0
             )
         ]
+
+        let pricePhase = now.timeIntervalSinceReferenceDate / 600
+        let priceUsd = 82_400 + sin(pricePhase) * 580 + cos(pricePhase * 1.7) * 160
+        let deltaUsd = sin(pricePhase * 1.9) * 92
 
         return RegimeSnapshot(
             generatedAt: now,
             regime: RegimeState(
                 key: .elevatedNetworkStress,
-                label: "Elevated Network Stress",
-                summary: "Persistent fee floors and healthy observable demand warrant a deeper arena review.",
+                label: "Busy Network, Worth Watching",
+                summary: "Bitcoin traffic is elevated enough that sending coins is harder and the queue deserves a closer look.",
                 alertLevel: .watch
             ),
             confidence: ConfidenceBreakdown(
@@ -50,35 +94,35 @@ public enum BitcoinRegimeSampleData {
                 coverage: 0.68,
                 agreement: 0.75,
                 notes: [
-                    "Known flows remain partial in the MVP pipeline.",
-                    "Live mempool inputs are strong enough to justify a regime read."
+                    "We can only see part of the large-buyer and macro picture in this MVP.",
+                    "The main network data is fresh enough to support a useful read."
                 ]
             ),
             scores: [
                 ScoreCard(
                     key: "mempoolStress",
-                    label: "Mempool Stress",
+                    label: "Network Traffic",
                     value: 72,
                     direction: .elevated,
-                    summary: "Fee floor 18 sat/vB with 7.3 blocks to clear.",
+                    summary: "The Bitcoin network is crowded. Typical low-end fees are around 18 sat/vB, and the queue would take about 7.3 blocks to clear.",
                     contributionWeight: 0.42,
                     sourceIds: ["mempool-space"]
                 ),
                 ScoreCard(
                     key: "macroLiquidity",
-                    label: "Macro Liquidity",
+                    label: "Broader Market Weather",
                     value: 61,
                     direction: .supportive,
-                    summary: "Dollar and real yields are not aggressively restrictive.",
+                    summary: "The wider market backdrop is helping more than hurting. Money conditions are not strongly pushing investors away from risk.",
                     contributionWeight: 0.28,
-                    sourceIds: ["fred-macro-demo"]
+                    sourceIds: ["fred-dxy-demo", "fred-real-yield-demo", "fred-liquidity-demo", "fred-risk-demo"]
                 ),
                 ScoreCard(
                     key: "knownFlowPressure",
-                    label: "Known Flow Pressure",
+                    label: "Big Buyer Activity",
                     value: 58,
                     direction: .supportive,
-                    summary: "$185M of observable ETF flow with 55% coverage.",
+                    summary: "Tracked large buyers, including visible ETF flows, added about $185M. We can currently see 55% of the picture.",
                     contributionWeight: 0.3,
                     sourceIds: ["etf-flow-demo"]
                 )
@@ -86,9 +130,9 @@ public enum BitcoinRegimeSampleData {
             evidence: [
                 EvidenceCard(
                     id: "fee-floor",
-                    title: "Fee floor persistence",
+                    title: "Base transaction cost",
                     valueLabel: "18 sat/vB floor",
-                    interpretation: "Elevated fees are persisting after block clearances.",
+                    interpretation: "Even after new blocks are mined, the cheapest workable fee stays high. That is a sign the queue is refilling quickly.",
                     direction: .elevated,
                     weight: 0.42,
                     freshnessLabel: "Live",
@@ -96,31 +140,88 @@ public enum BitcoinRegimeSampleData {
                 ),
                 EvidenceCard(
                     id: "macro-backdrop",
-                    title: "Macro backdrop",
+                    title: "Broader market backdrop",
                     valueLabel: "61/100",
-                    interpretation: "Macro conditions are not strongly fighting Bitcoin demand.",
+                    interpretation: "Outside conditions are reasonably friendly for risk-taking, so macro is not putting heavy pressure on Bitcoin.",
                     direction: .supportive,
                     weight: 0.28,
                     freshnessLabel: "Demo",
-                    sourceIds: ["fred-macro-demo"]
+                    sourceIds: ["fred-dxy-demo", "fred-real-yield-demo", "fred-liquidity-demo", "fred-risk-demo"]
                 ),
                 EvidenceCard(
                     id: "flow-context",
-                    title: "Known flow context",
+                    title: "Large tracked buying",
                     valueLabel: "$185M",
-                    interpretation: "Observable ETF demand is supportive, though coverage is partial.",
+                    interpretation: "Visible large buyers are adding support. This mainly reflects public ETF data, and it is still only part of the full market.",
                     direction: .supportive,
                     weight: 0.3,
                     freshnessLabel: "Demo",
                     sourceIds: ["etf-flow-demo"]
                 )
             ],
-            narrative: "Regime: Elevated Network Stress. Evidence: fee floor persistence and known flow context. Confidence: 0.74.",
+            marketWeather: MarketWeatherDetail(
+                score: 61,
+                outlook: "Mostly Sunny",
+                summary: "The wider market backdrop is helping more than hurting. Money conditions are not strongly pushing investors away from risk.",
+                components: [
+                    MarketWeatherComponent(
+                        id: "dollarIndex",
+                        title: "Dollar Strength",
+                        score: 70.6,
+                        valueLabel: "123.4",
+                        changeLabel: "Down 1.3 versus previous reading",
+                        effect: .supportive,
+                        weight: 0.30,
+                        summary: "A softer dollar is easing pressure on global risk assets.",
+                        sourceIds: ["fred-dxy-demo"]
+                    ),
+                    MarketWeatherComponent(
+                        id: "realYield10y",
+                        title: "10Y Real Yield",
+                        score: 41.8,
+                        valueLabel: "1.68%",
+                        changeLabel: "Down 0.07% versus previous reading",
+                        effect: .neutral,
+                        weight: 0.30,
+                        summary: "Real yields are not moving enough to dominate the current read.",
+                        sourceIds: ["fred-real-yield-demo"]
+                    ),
+                    MarketWeatherComponent(
+                        id: "liquidityProxy",
+                        title: "Liquidity Proxy",
+                        score: 56,
+                        valueLabel: "7,216 bn",
+                        changeLabel: "Up 36 bn versus previous reading",
+                        effect: .neutral,
+                        weight: 0.20,
+                        summary: "Liquidity is stable enough that it is neither helping nor hurting much.",
+                        sourceIds: ["fred-liquidity-demo"]
+                    ),
+                    MarketWeatherComponent(
+                        id: "riskProxy",
+                        title: "Risk-On Proxy",
+                        score: 70.3,
+                        valueLabel: "5,210",
+                        changeLabel: "Up 42 versus previous reading",
+                        effect: .supportive,
+                        weight: 0.20,
+                        summary: "Broader risk appetite is constructive and not pushing investors into defense.",
+                        sourceIds: ["fred-risk-demo"]
+                    )
+                ]
+            ),
+            btcPrice: BitcoinPriceTicker(
+                priceUsd: priceUsd,
+                deltaUsd: deltaUsd,
+                live: true,
+                sourceIds: ["mempool-price"]
+            ),
+            narrative: "In plain English: Bitcoin traffic is elevated enough that sending coins is harder and the queue deserves a closer look. The clearest signals right now are base transaction cost and large tracked buying. Confidence is moderate (0.74) because some of the inputs are still partial or less timely than we would like.",
             actions: [
-                ActionLink(id: "open-arena", label: "Open Mempool Arena", destination: "vision://arena"),
-                ActionLink(id: "view-replay", label: "Replay 6H", destination: "/v1/mempool/replay?range=6h&bucket=1m"),
-                ActionLink(id: "view-methodology", label: "View Methodology", destination: "/v1/methodology"),
-                ActionLink(id: "save-snapshot", label: "Save Snapshot", destination: "vision://snapshot/save")
+                ActionLink(id: "open-arena", label: "Open Fee Pressure Navigator", destination: "vision://arena"),
+                ActionLink(id: "view-replay", label: "Replay Last 6 Hours", destination: "/v1/mempool/replay?range=6h&bucket=1m"),
+                ActionLink(id: "view-methodology", label: "How This Is Calculated", destination: "/v1/methodology"),
+                ActionLink(id: "save-snapshot", label: "Save This Snapshot", destination: "vision://snapshot/save")
             ],
             sources: sources
         )
@@ -149,19 +250,19 @@ public enum BitcoinRegimeSampleData {
                 ]
             ],
             sourceCatalog: [
-                ["id": "mempool-space", "class": "A", "usage": "Live mempool context"],
-                ["id": "fred-series", "class": "B", "usage": "Macro backdrop"],
-                ["id": "etf-flow-proxy", "class": "B", "usage": "Observable ETF flow context"]
+                ["id": "mempool-space", "class": "A", "usage": "Live Bitcoin network traffic"],
+                ["id": "fred-series", "class": "B", "usage": "Broader market backdrop"],
+                ["id": "etf-flow-proxy", "class": "B", "usage": "Visible ETF and large-buyer flow context"]
             ],
             freshnessRules: [
-                "Live mempool inputs update on request.",
-                "Macro inputs degrade to delayed when the observation is older than two days.",
-                "Known flows degrade to stale after 36 hours."
+                "Network traffic data refreshes each time the view is loaded.",
+                "Broader market inputs are treated as delayed when they are more than two days old.",
+                "Tracked flow inputs become stale after 36 hours."
             ],
             limitations: [
-                "Known flows are intentionally partial in MVP mode.",
-                "Replay is fixture-backed until snapshot persistence is implemented.",
-                "Macro scoring describes backdrop and does not predict price."
+                "Large-buyer flow tracking is intentionally partial in MVP mode.",
+                "Replay still uses sample history until saved snapshots are implemented.",
+                "The broader market score describes the backdrop and does not predict price."
             ]
         )
     }
@@ -231,7 +332,7 @@ public enum BitcoinRegimeSampleData {
 
     private static func feeBands(totalQueuedVBytes: Int, minFee: Int, maxFee: Int) -> [FeeBand] {
         let weights: [Double] = [0.40, 0.28, 0.19, 0.13]
-        let labels = ["Priority", "Competitive", "Sticky Floor", "Tail"]
+        let labels = ["Urgent", "Soon", "Base fee zone", "Low priority"]
         let lowerBounds = [max(maxFee - 8, minFee + 10), minFee + 8, minFee + 2, 1]
         let upperBounds = [maxFee, maxFee - 9, minFee + 7, minFee + 1]
 
@@ -248,15 +349,15 @@ public enum BitcoinRegimeSampleData {
 
     private static func stateLabel(score: Double) -> String {
         if score >= 80 {
-            return "Structural congestion"
+            return "Very busy, not clearing"
         }
         if score >= 68 {
-            return "Elevated stress"
+            return "Busy and staying busy"
         }
         if score >= 52 {
-            return "Normal to firm"
+            return "Manageable traffic"
         }
-        return "Calm"
+        return "Quiet"
     }
 }
 

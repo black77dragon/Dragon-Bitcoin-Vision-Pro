@@ -26,29 +26,35 @@ export function buildMethodologyResponse(now = new Date()): MethodologyResponse 
       {
         id: "mempool-space",
         class: "A",
-        usage: "Live mempool congestion, fee bands, and short-term stress"
+        usage: "Live Bitcoin network traffic, fee levels, and short-term queue pressure"
       },
       {
-        id: "fred-series",
+        id: "macro-signal-feed",
         class: "B",
-        usage: "Delayed macro context for liquidity and risk framing"
+        usage: "Broader market backdrop, using production data with a FRED-based fallback"
+      },
+      {
+        id: "glassnode-etf-flows",
+        class: "B",
+        usage: "Primary U.S. spot ETF net-flow series used as the main visible large-buyer proxy"
       },
       {
         id: "etf-flow-proxy",
         class: "B",
-        usage: "Publicly attributable ETF flow context with explicit partial coverage"
+        usage: "Optional internal override for ETF aggregates when a custom feed is available"
       }
     ],
     freshnessRules: [
-      "Mempool data is treated as live when fetched successfully during request assembly.",
-      "Macro inputs degrade from live to delayed when the latest observation is older than two calendar days.",
-      "Known flow inputs degrade to stale when daily flow data is older than 36 hours.",
-      "Demo data is allowed for internal prototypes, but always carries an explicit confidence penalty."
+      "Network traffic data is treated as live when it is fetched successfully during the current request.",
+      "Broader market inputs are marked delayed when they are older than the normal daily or weekly update schedule.",
+      "Tracked flow inputs are marked stale when the daily flow data is more than 36 hours old.",
+      "Demo data is allowed for prototypes, but it always lowers confidence."
     ],
     limitations: [
-      "Known flows are intentionally incomplete in the MVP and should not be interpreted as omniscient capital tracking.",
-      "Replay history is currently generated from deterministic fixtures until snapshot persistence is added.",
-      "Macro scoring describes backdrop and does not attempt to predict Bitcoin price direction."
+      "Large-buyer tracking is intentionally incomplete in the MVP, so it is only a partial view of market demand.",
+      "Glassnode ETF totals can be annotated with a Farside cross-check, but that validation is still based on public daily aggregates rather than true real-time creation data.",
+      "Replay uses saved snapshots when available and temporarily backfills missing history until enough live frames accumulate.",
+      "The broader market score describes conditions around Bitcoin. It is not a direct price forecast."
     ]
   };
 }

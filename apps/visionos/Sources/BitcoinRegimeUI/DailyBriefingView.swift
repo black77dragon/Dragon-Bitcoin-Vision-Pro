@@ -4,10 +4,17 @@ import SwiftUI
 public struct DailyBriefingView: View {
     public let snapshot: RegimeSnapshot
     public let onAction: (ActionLink) -> Void
+    public let onOpenMarketWeather: () -> Void
+    @State private var activeInfo: BriefingInfoContent?
 
-    public init(snapshot: RegimeSnapshot, onAction: @escaping (ActionLink) -> Void = { _ in }) {
+    public init(
+        snapshot: RegimeSnapshot,
+        onAction: @escaping (ActionLink) -> Void = { _ in },
+        onOpenMarketWeather: @escaping () -> Void = {}
+    ) {
         self.snapshot = snapshot
         self.onAction = onAction
+        self.onOpenMarketWeather = onOpenMarketWeather
     }
 
     public var body: some View {
@@ -16,24 +23,37 @@ public struct DailyBriefingView: View {
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
                 ForEach(snapshot.scores, id: \.key) { score in
-                    ScoreCardTile(score: score)
+                    ScoreCardTile(
+                        score: score,
+                        status: TileDeliveryState.from(sourceIds: score.sourceIds, sources: snapshot.sources),
+                        onInfo: {
+                            activeInfo = briefingInfo(for: score)
+                        },
+                        onDeepDive: score.key == "macroLiquidity" ? onOpenMarketWeather : nil
+                    )
                 }
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Evidence")
+                Text("What This Read Is Based On")
                     .font(.headline)
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         ForEach(snapshot.evidence, id: \.id) { card in
-                            EvidenceTile(card: card)
+                            EvidenceTile(
+                                card: card,
+                                status: TileDeliveryState.from(sourceIds: card.sourceIds, sources: snapshot.sources),
+                                onInfo: {
+                                    activeInfo = briefingInfo(for: card)
+                                }
+                            )
                         }
                     }
                 }
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                Text("Narrative")
+                Text("In Plain English")
                     .font(.headline)
                 Text(snapshot.narrative)
                     .font(.body)
@@ -42,24 +62,45 @@ public struct DailyBriefingView: View {
 
             HStack(spacing: 12) {
                 ForEach(snapshot.actions, id: \.id) { action in
-                    Button(action.label) {
-                        onAction(action)
+                    if isNavigationAction(action) {
+                        AppNavigationButton(
+                            LocalizedStringKey(action.label),
+                            systemImage: "arrow.up.forward.square"
+                        ) {
+                            onAction(action)
+                        }
+                    } else {
+                        Button(action.label) {
+                            onAction(action)
+                        }
+                        .buttonStyle(.borderedProminent)
                     }
-                    .buttonStyle(.borderedProminent)
                 }
             }
 
             HStack(spacing: 16) {
-                SummaryStrip(
-                    title: "Macro Strip",
-                    subtitle: scoreSummary(for: "macroLiquidity"),
-                    accent: .blue
-                )
-                SummaryStrip(
-                    title: "Known Flows",
-                    subtitle: scoreSummary(for: "knownFlowPressure"),
-                    accent: .teal
-                )
+                if let macroScore = score(for: "macroLiquidity") {
+                    SummaryStrip(
+                        score: macroScore,
+                        accent: .blue,
+                        status: tileState(for: "macroLiquidity"),
+                        onInfo: {
+                            activeInfo = briefingInfo(for: macroScore)
+                        },
+                        onDeepDive: onOpenMarketWeather
+                    )
+                }
+                if let flowScore = score(for: "knownFlowPressure") {
+                    SummaryStrip(
+                        score: flowScore,
+                        accent: .teal,
+                        status: tileState(for: "knownFlowPressure"),
+                        onInfo: {
+                            activeInfo = briefingInfo(for: flowScore)
+                        },
+                        onDeepDive: nil
+                    )
+                }
             }
         }
         .padding(24)
@@ -67,26 +108,42 @@ public struct DailyBriefingView: View {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .fill(.ultraThinMaterial)
         )
+        .sheet(item: $activeInfo) { info in
+            BriefingInfoSheet(content: info)
+        }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Daily Briefing")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 8) {
+                        Text("Today's Read")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        TileStatusBadge(
+                            state: TileDeliveryState.from(
+                                sourceIds: snapshot.sources.map(\.id),
+                                sources: snapshot.sources
+                            )
+                        )
+                    }
                     Text(snapshot.regime.label)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                     Text(snapshot.regime.summary)
                         .font(.body)
+                        .foregroundStyle(.secondary)
+                    Text("This screen turns several market signals into a simpler read on whether Bitcoin demand looks healthy, stressed, or unclear.")
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
                 VStack(alignment: .trailing, spacing: 6) {
-                    ConfidenceBadge(confidence: snapshot.confidence)
+                    ConfidenceBadge(confidence: snapshot.confidence) {
+                        activeInfo = briefingInfoForConfidence(snapshot.confidence)
+                    }
                     Text(snapshot.generatedAt, style: .time)
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -97,25 +154,63 @@ public struct DailyBriefingView: View {
         }
     }
 
-    private func scoreSummary(for key: String) -> String {
-        snapshot.scores.first(where: { $0.key == key })?.summary ?? "Unavailable"
+    private func score(for key: String) -> ScoreCard? {
+        snapshot.scores.first(where: { $0.key == key })
+    }
+
+    private func tileState(for key: String) -> TileDeliveryState {
+        guard let score = snapshot.scores.first(where: { $0.key == key }) else {
+            return .storeFront
+        }
+
+        return TileDeliveryState.from(sourceIds: score.sourceIds, sources: snapshot.sources)
+    }
+
+    private func isNavigationAction(_ action: ActionLink) -> Bool {
+        action.destination == "vision://arena"
     }
 }
 
 public struct DemoShellView: View {
     @StateObject private var viewModel: BriefingViewModel
+    private let onAction: (ActionLink) -> Void
+    private let onOpenTrafficView: () -> Void
+    private let onOpenMarketWeatherView: () -> Void
+    private let onToggleImmersiveTrafficView: () -> Void
+    private let isImmersiveTrafficActive: Bool
 
-    public init(service: any RegimeService = DemoRegimeService()) {
+    public init(
+        service: any RegimeService = DemoRegimeService(),
+        onAction: @escaping (ActionLink) -> Void = { _ in },
+        onOpenTrafficView: @escaping () -> Void = {},
+        onOpenMarketWeatherView: @escaping () -> Void = {},
+        onToggleImmersiveTrafficView: @escaping () -> Void = {},
+        isImmersiveTrafficActive: Bool = false
+    ) {
         _viewModel = StateObject(wrappedValue: BriefingViewModel(service: service))
+        self.onAction = onAction
+        self.onOpenTrafficView = onOpenTrafficView
+        self.onOpenMarketWeatherView = onOpenMarketWeatherView
+        self.onToggleImmersiveTrafficView = onToggleImmersiveTrafficView
+        self.isImmersiveTrafficActive = isImmersiveTrafficActive
     }
 
     public var body: some View {
         Group {
             if let snapshot = viewModel.snapshot, let replay = viewModel.replay, let methodology = viewModel.methodology {
                 HStack(alignment: .top, spacing: 20) {
-                    DailyBriefingView(snapshot: snapshot)
+                    DailyBriefingView(
+                        snapshot: snapshot,
+                        onAction: onAction,
+                        onOpenMarketWeather: onOpenMarketWeatherView
+                    )
                     VStack(spacing: 16) {
-                        MempoolArenaView(timeline: replay)
+                        MempoolArenaView(
+                            timeline: replay,
+                            onOpenDetails: onOpenTrafficView,
+                            onToggleImmersive: onToggleImmersiveTrafficView,
+                            isImmersiveActive: isImmersiveTrafficActive
+                        )
                         MethodologyView(methodology: methodology)
                     }
                     .frame(maxWidth: 520)
@@ -142,31 +237,72 @@ public struct DemoShellView: View {
 
 private struct ScoreCardTile: View {
     let score: ScoreCard
+    let status: TileDeliveryState
+    let onInfo: () -> Void
+    let onDeepDive: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(score.label)
-                    .font(.headline)
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        if let weatherStyle = weatherStyle {
+                            Image(systemName: weatherStyle.symbolName)
+                                .foregroundStyle(weatherStyle.tint)
+                        }
+                        Text(score.label)
+                            .font(.headline)
+                    }
+                    TileStatusBadge(state: status)
+                }
                 Spacer()
-                Text("\(Int(score.value))/100")
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .foregroundStyle(color)
+                HStack(spacing: 10) {
+                    Button(action: onInfo) {
+                        Image(systemName: "info.circle")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("\(Int(score.value))/100")
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundStyle(color)
+                }
             }
 
             Text(score.summary)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
+            Text(scoreContextLine(for: score))
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+
             ProgressView(value: score.value, total: 100)
                 .tint(color)
+
+            if let onDeepDive {
+                Button(action: onDeepDive) {
+                    Label("Open Weather Details", systemImage: "arrow.up.forward.square")
+                        .font(.footnote.weight(.semibold))
+                }
+                .buttonStyle(.bordered)
+            }
         }
         .padding(18)
-        .frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 182, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(color.opacity(0.12))
         )
+    }
+
+    private var weatherStyle: MarketWeatherForecastStyle? {
+        guard score.key == "macroLiquidity" else {
+            return nil
+        }
+
+        return marketWeatherForecastStyle(score: score.value)
     }
 
     private var color: Color {
@@ -185,18 +321,33 @@ private struct ScoreCardTile: View {
 
 private struct EvidenceTile: View {
     let card: EvidenceCard
+    let status: TileDeliveryState
+    let onInfo: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text(card.title)
-                    .font(.headline)
-                Spacer()
-                Text(card.freshnessLabel)
-                    .font(.caption)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.white.opacity(0.15), in: Capsule())
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top) {
+                    Text(card.title)
+                        .font(.headline)
+                    Spacer()
+                    HStack(spacing: 8) {
+                        Button(action: onInfo) {
+                            Image(systemName: "info.circle")
+                                .font(.body)
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+
+                        Text(card.freshnessLabel)
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.white.opacity(0.15), in: Capsule())
+                    }
+                }
+
+                TileStatusBadge(state: status)
             }
 
             Text(card.valueLabel)
@@ -207,7 +358,8 @@ private struct EvidenceTile: View {
                 .foregroundStyle(.secondary)
         }
         .padding(18)
-        .frame(width: 250, alignment: .leading)
+        .frame(width: 290, alignment: .leading)
+        .frame(maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(Color.black.opacity(0.08))
@@ -216,35 +368,80 @@ private struct EvidenceTile: View {
 }
 
 private struct SummaryStrip: View {
-    let title: String
-    let subtitle: String
+    let score: ScoreCard
     let accent: Color
+    let status: TileDeliveryState
+    let onInfo: () -> Void
+    let onDeepDive: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-            Text(subtitle)
+            HStack(alignment: .top) {
+                HStack(spacing: 8) {
+                    if let weatherStyle = weatherStyle {
+                        Image(systemName: weatherStyle.symbolName)
+                            .foregroundStyle(weatherStyle.tint)
+                    }
+                    Text(summaryStripTitle(for: score.key))
+                        .font(.headline)
+                }
+                Spacer()
+                HStack(spacing: 8) {
+                    Button(action: onInfo) {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+
+                    TileStatusBadge(state: status)
+                }
+            }
+            Text(score.summary)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            if let onDeepDive {
+                Button(action: onDeepDive) {
+                    Label("Deep Dive", systemImage: "arrow.up.forward.square")
+                        .font(.footnote.weight(.semibold))
+                }
+                .buttonStyle(.bordered)
+            }
         }
         .padding(18)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(accent.opacity(0.12))
         )
     }
+
+    private var weatherStyle: MarketWeatherForecastStyle? {
+        guard score.key == "macroLiquidity" else {
+            return nil
+        }
+
+        return marketWeatherForecastStyle(score: score.value)
+    }
 }
 
 private struct ConfidenceBadge: View {
     let confidence: ConfidenceBreakdown
+    let onInfo: () -> Void
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
-            Text("Confidence")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 8) {
+                Text("Confidence")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Button(action: onInfo) {
+                    Image(systemName: "info.circle")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
             Text(confidence.overall.formatted(.number.precision(.fractionLength(2))))
                 .font(.system(.title2, design: .rounded, weight: .bold))
             Text(confidence.notes.first ?? "")

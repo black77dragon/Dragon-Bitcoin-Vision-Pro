@@ -35,12 +35,20 @@ export interface MacroSignal {
   coverage: number;
   sources: SourceStamp[];
   live: boolean;
+  headlineSummary?: string;
 }
 
 export interface FlowSignal {
   netEtfFlowUsd: number;
   previousNetEtfFlowUsd: number;
   coverage: number;
+  sources: SourceStamp[];
+  live: boolean;
+}
+
+export interface BitcoinPriceSignal {
+  priceUsd: number;
+  deltaUsd?: number;
   sources: SourceStamp[];
   live: boolean;
 }
@@ -176,6 +184,31 @@ export function buildDemoFlowSignal(now = new Date()): FlowSignal {
   };
 }
 
+export function buildDemoBitcoinPriceSignal(now = new Date()): BitcoinPriceSignal {
+  const source = buildSourceStamp({
+    id: "btc-price-demo",
+    name: "BTC/USD Demo Feed",
+    licenseClass: "A",
+    cadence: "near-real-time",
+    status: "demo",
+    fetchedAt: now,
+    freshnessSeconds: 0,
+    confidencePenalty: 0.14,
+    note: "Synthetic BTC/USD price used when the live quote feed is unavailable."
+  });
+
+  const phase = now.getTime() / 600_000;
+  const priceUsd = round(82_400 + Math.sin(phase) * 580 + Math.cos(phase * 1.7) * 160, 2);
+  const deltaUsd = round(Math.sin(phase * 1.9) * 92, 2);
+
+  return {
+    priceUsd,
+    deltaUsd,
+    sources: [source],
+    live: false
+  };
+}
+
 export function buildDemoReplayFrames(
   range: ReplayRange,
   bucket: ReplayBucket,
@@ -274,7 +307,7 @@ export function buildSourceStamp(input: {
 
 export function buildFeeBands(totalQueuedVBytes: number, minFee: number, maxFee: number): FeeBand[] {
   const bandWeights = [0.4, 0.28, 0.19, 0.13];
-  const labels = ["Priority", "Competitive", "Sticky Floor", "Tail"];
+  const labels = ["Urgent", "Soon", "Base fee zone", "Low priority"];
   const lowerBounds = [Math.max(maxFee - 8, minFee + 10), minFee + 8, minFee + 2, 1];
   const upperBounds = [maxFee, maxFee - 9, minFee + 7, minFee + 1];
 
@@ -289,15 +322,15 @@ export function buildFeeBands(totalQueuedVBytes: number, minFee: number, maxFee:
 
 function stateLabelForScore(score: number): string {
   if (score >= 80) {
-    return "Structural congestion";
+    return "Very busy, not clearing";
   }
   if (score >= 68) {
-    return "Elevated stress";
+    return "Busy and staying busy";
   }
   if (score >= 52) {
-    return "Normal to firm";
+    return "Manageable traffic";
   }
-  return "Calm";
+  return "Quiet";
 }
 
 function clamp(value: number, min: number, max: number): number {

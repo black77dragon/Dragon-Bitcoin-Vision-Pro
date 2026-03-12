@@ -47,6 +47,32 @@ export interface EvidenceCard {
   sourceIds: string[];
 }
 
+export interface MarketWeatherComponent {
+  id: string;
+  title: string;
+  score: number;
+  valueLabel: string;
+  changeLabel: string;
+  effect: ScoreDirection;
+  weight: number;
+  summary: string;
+  sourceIds: string[];
+}
+
+export interface MarketWeatherDetail {
+  score: number;
+  outlook: string;
+  summary: string;
+  components: MarketWeatherComponent[];
+}
+
+export interface BitcoinPriceTicker {
+  priceUsd: number;
+  deltaUsd?: number;
+  live: boolean;
+  sourceIds: string[];
+}
+
 export interface ConfidenceBreakdown {
   overall: number;
   timeliness: number;
@@ -74,6 +100,8 @@ export interface RegimeSnapshot {
   confidence: ConfidenceBreakdown;
   scores: ScoreCard[];
   evidence: EvidenceCard[];
+  marketWeather?: MarketWeatherDetail;
+  btcPrice?: BitcoinPriceTicker;
   narrative: string;
   actions: ActionLink[];
   sources: SourceStamp[];

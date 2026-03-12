@@ -5,21 +5,24 @@ import type { DataMode, ReplayBucket, ReplayRange } from "./contracts.ts";
 import { buildCurrentBriefing } from "./briefing.ts";
 import { buildMethodologyResponse } from "./methodology.ts";
 import { buildReplayTimeline } from "./replay.ts";
+import { createReplayFrameStore, type ReplayFrameStore } from "./replay-store.ts";
 
 type FetchFn = typeof fetch;
 
 export function createServer(input: {
   config?: AppConfig;
   fetchImpl?: FetchFn;
+  replayStore?: ReplayFrameStore;
 } = {}) {
   const config = input.config ?? readConfig();
   const fetchImpl = input.fetchImpl ?? fetch;
+  const replayStore = input.replayStore ?? createReplayFrameStore(config);
 
   return createHttpServer(async (request, response) => {
     const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "localhost"}`);
 
     try {
-      const result = await handleApiRequest({ url, config, fetchImpl });
+      const result = await handleApiRequest({ url, config, fetchImpl, replayStore });
       writeJson(response, result.statusCode, result.body);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
@@ -34,11 +37,13 @@ export function createServer(input: {
 export async function startServer(input: {
   config?: AppConfig;
   fetchImpl?: FetchFn;
+  replayStore?: ReplayFrameStore;
 } = {}) {
   const config = input.config ?? readConfig();
   const server = createServer({
     config,
-    fetchImpl: input.fetchImpl
+    fetchImpl: input.fetchImpl,
+    replayStore: input.replayStore
   });
 
   await new Promise<void>((resolve) => {
@@ -52,8 +57,10 @@ export async function handleApiRequest(input: {
   url: URL;
   config: AppConfig;
   fetchImpl?: FetchFn;
+  replayStore?: ReplayFrameStore;
 }): Promise<{ statusCode: number; body: unknown }> {
   const fetchImpl = input.fetchImpl ?? fetch;
+  const replayStore = input.replayStore ?? createReplayFrameStore(input.config);
 
   if (input.url.pathname === "/healthz") {
     return {
@@ -81,7 +88,8 @@ export async function handleApiRequest(input: {
         bucket: parseBucket(input.url.searchParams.get("bucket")),
         mode: parseMode(input.url.searchParams.get("mode"), input.config.defaultMode),
         config: input.config,
-        fetchImpl
+        fetchImpl,
+        replayStore
       })
     };
   }

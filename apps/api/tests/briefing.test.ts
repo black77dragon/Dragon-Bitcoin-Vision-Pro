@@ -15,6 +15,8 @@ test("briefing endpoint assembles a complete snapshot in demo mode", async () =>
 
   assert.equal(snapshot.scores.length, 3);
   assert.equal(snapshot.evidence.length, 3);
+  assert.equal(snapshot.marketWeather?.components.length, 4);
+  assert.ok((snapshot.btcPrice?.priceUsd ?? 0) > 0);
   assert.ok(snapshot.sources.length >= 3);
   assert.ok(snapshot.actions.some((action) => action.id === "open-arena"));
 });

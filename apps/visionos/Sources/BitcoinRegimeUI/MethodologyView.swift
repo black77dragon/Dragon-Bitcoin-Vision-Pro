@@ -11,22 +11,33 @@ public struct MethodologyView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("Methodology")
-                    .font(.title3.weight(.bold))
+                HStack(spacing: 8) {
+                    Text("How It Works")
+                        .font(.title3.weight(.bold))
+                    TileStatusBadge(state: .productive)
+                }
                 Spacer()
                 Text(methodology.updatedAt, style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
 
+            Text("The app combines a few simple ingredients. The percentages below show how much each ingredient matters inside each score.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(methodology.scoreWeights.keys.sorted(), id: \.self) { scoreKey in
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(scoreKey)
-                            .font(.headline)
+                        HStack(alignment: .top) {
+                            Text(humanizedScoreKey(scoreKey))
+                                .font(.headline)
+                            Spacer()
+                            TileStatusBadge(state: .productive)
+                        }
                         ForEach(methodology.scoreWeights[scoreKey]!.keys.sorted(), id: \.self) { weightKey in
                             HStack {
-                                Text(weightKey)
+                                Text(humanizedWeightKey(weightKey))
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 Spacer()
@@ -58,5 +69,47 @@ public struct MethodologyView: View {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(.thinMaterial)
         )
+    }
+
+    private func humanizedScoreKey(_ key: String) -> String {
+        switch key {
+        case "mempoolStress":
+            return "Network Traffic"
+        case "macroLiquidity":
+            return "Broader Market Weather"
+        case "knownFlowPressure":
+            return "Big Buyer Activity"
+        default:
+            return key
+        }
+    }
+
+    private func humanizedWeightKey(_ key: String) -> String {
+        switch key {
+        case "persistentFeeFloorPercentile":
+            return "How sticky the base fee is"
+        case "queuedVBytesPercentile":
+            return "How much demand is waiting"
+        case "estimatedBlocksToClear":
+            return "How many blocks the queue may need"
+        case "postBlockRefillPersistence":
+            return "How fast the queue refills after a block"
+        case "dollarStrengthProxy":
+            return "Dollar strength"
+        case "realYield10yProxy":
+            return "Real yields"
+        case "liquidityProxy":
+            return "Liquidity backdrop"
+        case "riskOnOffProxy":
+            return "Risk appetite"
+        case "netEtfFlowBias":
+            return "Net ETF flow"
+        case "flowAcceleration":
+            return "Whether flows are speeding up"
+        case "coveragePenalty":
+            return "Penalty for incomplete data"
+        default:
+            return key
+        }
     }
 }

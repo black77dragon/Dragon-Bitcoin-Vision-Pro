@@ -17,6 +17,10 @@ public final class BriefingViewModel: ObservableObject {
     }
 
     public func load() async {
+        guard !isLoading else {
+            return
+        }
+
         isLoading = true
         errorMessage = nil
 
